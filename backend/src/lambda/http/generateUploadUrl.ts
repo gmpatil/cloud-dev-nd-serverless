@@ -1,10 +1,18 @@
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import { getUserId } from "../../utils/utils";
+import { createLogger } from '../../utils/logger' ;
+import * as bld from '../../businessLogic/todoBl' ;
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const logger = createLogger("generateUploadUrl");
+
+export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
+  :Promise<APIGatewayProxyResult> => {
+  logger.debug("generateUploadUrl.handler - in"); 
+
   const todoId = event.pathParameters.todoId
 
-  // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
+  logger.debug("generateUploadUrl.handler - out");   
   return undefined
 }

@@ -1,34 +1,39 @@
-import * as AWSb from 'aws-sdk';
+import * as AWS from 'aws-sdk';
 import { TodoItem } from '../models/TodoItem';
 import { TodoUpdate } from '../models/TodoUpdate';
 import { deleteAttachement } from './attachementS3';
 
-import { createLogger } from '../utils/logger' ;
+import { createLogger } from '../utils/logger';
 
 const logger = createLogger("todoDb");
 
-const AWSXRay = require('aws-xray-sdk');
+// const AWSXRay = require('aws-xray-sdk');
+// const AWS = AWSXRay.captureAWS(AWSb)
 
-const AWS = AWSXRay.captureAWS(AWSb)
-
-const dbDocClient = new AWS.DynamoDB.DocumentClient({endpoint: 'http://localhost:8000'});
 const tbl = process.env.TODOS_TABLE
 const idx = process.env.TODOS_USR_INDEX
 
+let dbDocClient: AWS.DynamoDB.DocumentClient;
+if (process.env.IS_OFFLINE) {
+    dbDocClient = new AWS.DynamoDB.DocumentClient({ endpoint: 'http://localhost:8000' });
+} else {
+    dbDocClient = new AWS.DynamoDB.DocumentClient();
+}
+
 export async function createTodo(todoDb: TodoItem): Promise<TodoItem> {
-    logger.debug("todoDb.createTodo - in");    
+    logger.debug("todoDb.createTodo - in");
 
     await dbDocClient.put({
         TableName: tbl,
         Item: todoDb
     }).promise();
 
-    logger.debug("todoDb.createTodo - out");    
+    logger.debug("todoDb.createTodo - out");
     return todoDb;
 }
 
 export async function getTodo(userId: string, todoId: string): Promise<TodoItem> {
-    logger.debug("todoDb.getTodo - in");    
+    logger.debug("todoDb.getTodo - in");
 
     const result = await dbDocClient.get({
         TableName: tbl,
@@ -38,27 +43,26 @@ export async function getTodo(userId: string, todoId: string): Promise<TodoItem>
         }
     }).promise();
 
-    logger.debug("todoDb.getTodo - out");        
+    logger.debug("todoDb.getTodo - out");
     return result.Item as TodoItem;
 }
 
 export async function getTodoByUser(userId: string): Promise<TodoItem[]> {
-    logger.debug("todoDb.getTodoByUser - in");    
+    logger.debug("todoDb.getTodoByUser - in");
 
-    const result = await dbDocClient.get({
+    const result = await dbDocClient.query({
         TableName: tbl,
         IndexName: idx,
         KeyConditionExpression: 'userId = :userId',
-        ExpressionAttributeValues: { ':userId': userId },
-        Key: { userId: userId }
+        ExpressionAttributeValues: { ':userId': userId }
     }).promise();
 
-    logger.debug("todoDb.getTodoByUser - out");        
+    logger.debug("todoDb.getTodoByUser - out");
     return result.Items as TodoItem[];
 }
 
 export async function updateTodo(userId: string, todoId: string, upd: TodoUpdate): Promise<TodoUpdate> {
-    logger.debug("todoDb.updateTodo - in");    
+    logger.debug("todoDb.updateTodo - in");
 
     // Name is reserved word in DynamoDB.
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ReservedWords.html
@@ -77,21 +81,21 @@ export async function updateTodo(userId: string, todoId: string, upd: TodoUpdate
         ReturnValues: "UPDATED_NEW"
     }).promise();
 
-    logger.debug("todoDb.updateTodo - out");        
+    logger.debug("todoDb.updateTodo - out");
     return res.Attributes;
 }
 
 export async function deleteTodo(userId: string, todoId: string): Promise<void> {
-    logger.debug("todoDb.deleteTodo - in");            
+    logger.debug("todoDb.deleteTodo - in");
     // Delete attachement from S3 bucket
-    const todo :TodoItem = await getTodo(userId, todoId);
+    const todo: TodoItem = await getTodo(userId, todoId);
     if (todo) {
         if (todo.attachmentUrl) {
             await deleteAttachement(todoId);
         }
     }
 
-    await dbDocClient.delete( {TableName: tbl, Key: { userId, todoId } }).promise();
+    await dbDocClient.delete({ TableName: tbl, Key: { userId, todoId } }).promise();
 
-    logger.debug("todoDb.deleteTodo - out");            
-  }
+    logger.debug("todoDb.deleteTodo - out");
+}

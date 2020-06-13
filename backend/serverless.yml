@@ -7,9 +7,10 @@ plugins:
   - serverless-reqvalidator-plugin
   - serverless-aws-documentation
   - serverless-plugin-canary-deployments
-  - serverless-offline
+  # - serverless-plugin-tracing  
   - serverless-dynamodb-local  
   - serverless-s3-local
+  - serverless-offline  
 provider:
   name: aws
   runtime: nodejs12.x
@@ -17,9 +18,9 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
 
-  tracing:
-    lambda: true
-    apiGateway: true
+  # tracing:
+    # lambda: true
+    # apiGateway: true
 
   environment:
     TODOS_TABLE: Todo-${self:provider.stage}
@@ -46,11 +47,18 @@ provider:
       Action:
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_USR_INDEX}
-
+    - Effect: "Allow" 
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
 custom:
   serverless-offline:
     port: 3003
+#    useChildProcesses: true    
   dynamodb:
+    # noStart: true
     start:
       port: 8000
       inMemory: true
@@ -63,7 +71,6 @@ custom:
     stages:
       - test 
       - dev        
-
   s3:
     host: localhost
     directory: /tmp
@@ -94,7 +101,7 @@ functions:
           method: get
           path: todos
           cors: true  
-                      
+    iamRoleStatementsInherit: true                      
     iamRoleStatements:
       - Effect: Allow
         Action:

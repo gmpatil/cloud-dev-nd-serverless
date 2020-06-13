@@ -1,12 +1,11 @@
-import * as AWSb from 'aws-sdk';
+import * as AWS from 'aws-sdk';
 
 import { createLogger } from '../utils/logger' ;
 
 const logger = createLogger("attachementS3");
 
-const AWSXRay = require('aws-xray-sdk');
-
-const AWS = AWSXRay.captureAWS(AWSb)
+// const AWSXRay = require('aws-xray-sdk');
+// const AWS = AWSXRay.captureAWS(AWSb)
 const s3 = new AWS.S3({ signatureVersion: 'v4' });
 const s3bucketName = process.env.IMAGES_S3_BUCKET
 const sgndUrlExp = parseInt(process.env.SIGNED_URL_EXPIRATION);
@@ -26,4 +25,9 @@ export async function deleteAttachement(todoId: string): Promise<void> {
     }
 
     logger.debug("todoDb.deleteAttachement - out");      
+}
+
+export async function generateAttachementUploadUrl(userId :string, todoId: string)
+    : Promise<string> {
+        return await s3.getSignedUrlPromise("putObject", {Bucket: s3bucketName, Key: todoId, Expires: sgndUrlExp});
 }
