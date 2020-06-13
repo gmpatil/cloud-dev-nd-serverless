@@ -1,9 +1,10 @@
 import { CreateTodoRequest } from '../requests/CreateTodoRequest';
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest';
-import { TodoItem } from '../models/TodoItem';
 import * as uuid from 'uuid';
 import { createLogger } from '../utils/logger';
+import { TodoItem } from '../models/TodoItem';
 import * as ddb from '../dataLayer/todoDb';
+import * as s3Svc from '../dataLayer/attachementS3';
 import { TodoUpdate } from '../models/TodoUpdate';
 
 
@@ -45,7 +46,39 @@ export async function updateTodoItem(userId: string, todoId: string, todoBus: Up
 export async function deleteTodoItem(userId: string, todoId: string)
     : Promise<void> {
     logger.debug("todoBl.deleteTodoItem - in");
-    await ddb.deleteTodo(userId, todoId);
+
+    const todoItm: TodoItem = await ddb.getTodo(userId, todoId);
+    if (todoItm) {
+        // Delete attachement from S3 bucket
+        if (todoItm.attachmentUrl) {
+            await s3Svc.deleteAttachement(todoId);
+        }
+
+        // Delete TodoItem from DynamoDB
+        await ddb.deleteTodo(userId, todoId);        
+    }
+
     logger.debug("todoBl.deleteTodoItem - out");
     return;
+}
+
+export async function getSignedUrl(userId: string, todoId: string)
+    :Promise<string> {
+    logger.debug("todoBl.getSignedUrl - in");
+    const todoItm: TodoItem = await ddb.getTodo(userId, todoId);
+    
+    //record/overwrite as a new attachment URL or update to existing one.    
+    if (todoItm) {
+        const downloadUrl :string = await s3Svc.getAttachementDownloadUrl(userId, todoId); 
+        // Add/update attachementURL for Todo item in DB
+        await ddb.updateTodoAttachement(userId, todoId, downloadUrl);
+
+        // get signed/upload URL from S3
+        const uploadUrl :string = await s3Svc.getAttachementUploadUrl(userId, todoId);        
+        logger.debug("todoBl.getSignedUrl - out 1");        
+        return uploadUrl;
+    } else {
+        logger.debug("todoBl.getSignedUrl - out 2");        
+        return null;
+    }
 }

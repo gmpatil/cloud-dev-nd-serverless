@@ -27,7 +27,12 @@ export async function deleteAttachement(todoId: string): Promise<void> {
     logger.debug("todoDb.deleteAttachement - out");      
 }
 
-export async function generateAttachementUploadUrl(userId :string, todoId: string)
+export async function getAttachementUploadUrl(userId :string, todoId: string)
     : Promise<string> {
         return await s3.getSignedUrlPromise("putObject", {Bucket: s3bucketName, Key: todoId, Expires: sgndUrlExp});
+}
+
+export async function getAttachementDownloadUrl(userId :string, todoId: string)
+    : Promise<string> {
+        return `https://${s3bucketName}.s3.amazonaws.com/${todoId}` ;
 }

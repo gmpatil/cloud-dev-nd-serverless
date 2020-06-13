@@ -12,12 +12,12 @@ const logger = createLogger("createTodo");
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent)
   : Promise<APIGatewayProxyResult> => {
   logger.debug("In crateTodo - in");
-  const newTodo: CreateTodoRequest = JSON.parse(event.body)
+  const newTodoItm: CreateTodoRequest = JSON.parse(event.body)
   const uid = getUserId(event);
-  const ret: TodoItem = await bl.createTodoItem(uid, newTodo);
+  const ret: TodoItem = await bl.createTodoItem(uid, newTodoItm);
   logger.debug("In crateTodo - out");
   return {
-    statusCode: 200,
+    statusCode: 201,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true

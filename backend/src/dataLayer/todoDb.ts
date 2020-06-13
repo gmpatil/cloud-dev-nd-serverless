@@ -1,8 +1,6 @@
 import * as AWS from 'aws-sdk';
 import { TodoItem } from '../models/TodoItem';
 import { TodoUpdate } from '../models/TodoUpdate';
-import { deleteAttachement } from './attachementS3';
-
 import { createLogger } from '../utils/logger';
 
 const logger = createLogger("todoDb");
@@ -85,15 +83,26 @@ export async function updateTodo(userId: string, todoId: string, upd: TodoUpdate
     return res.Attributes;
 }
 
+export async function updateTodoAttachement(userId: string, todoId: string, downloadUrl: string)
+    :Promise<TodoUpdate> {
+        
+    logger.debug("todoDb.updateTodoAttachement - in");
+    const res = await dbDocClient.update({
+        TableName: tbl,
+        Key: { userId: userId, todoId: todoId },
+        UpdateExpression: "set attachmentUrl=:aur",
+        ExpressionAttributeValues: {
+            ":aur": downloadUrl
+        },
+        ReturnValues: "UPDATED_NEW"
+    }).promise();
+
+    logger.debug("todoDb.updateTodoAttachement - out");
+    return res.Attributes;
+}
+
 export async function deleteTodo(userId: string, todoId: string): Promise<void> {
     logger.debug("todoDb.deleteTodo - in");
-    // Delete attachement from S3 bucket
-    const todo: TodoItem = await getTodo(userId, todoId);
-    if (todo) {
-        if (todo.attachmentUrl) {
-            await deleteAttachement(todoId);
-        }
-    }
 
     await dbDocClient.delete({ TableName: tbl, Key: { userId, todoId } }).promise();
 

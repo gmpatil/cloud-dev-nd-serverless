@@ -28,8 +28,9 @@
 											"    pm.expect(jsonData.items.length).to.equal(0);          ",
 											"});",
 											"",
-											"pm.test(\"Response time is less than 500ms\", function () {",
-											"    pm.expect(pm.response.responseTime).to.be.below(500);",
+											"pm.test(\"Response time is less than 900ms\", function () {",
+											"    //after warm start.",
+											"    pm.expect(pm.response.responseTime).to.be.below(300);",
 											"});",
 											""
 										],
@@ -69,8 +70,8 @@
 									"script": {
 										"id": "ef0711cd-0956-4035-8bd2-495a405f4023",
 										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
 											"});",
 											"",
 											"pm.test(\"The post returns a new item\", function () {",
@@ -82,8 +83,8 @@
 											"    pm.expect(jsonData.dueDate).to.not.eql(null);            ",
 											"});",
 											"",
-											"pm.test(\"Response time is less than 700ms\", function () {",
-											"    pm.expect(pm.response.responseTime).to.be.below(500);",
+											"pm.test(\"Response time is less than 900ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(900);",
 											"});",
 											"",
 											"var jsonData = JSON.parse(responseBody);",
@@ -110,7 +111,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\": \"Water flowers1\",\n\t\"dueDate\": \"2019-06-14\"\n}"
+									"raw": "{\n  \"createdAt\": \"2019-07-27T20:01:45.424Z\",\n  \"name\": \"Buy milk\",\n  \"dueDate\": \"2019-07-29T20:01:45.424Z\",\n  \"done\": false,\n  \"attachmentUrl\": \"http://example.com/image.png\"\n}",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "http://localhost:3000/test/todos",
@@ -144,7 +148,7 @@
 											"    pm.expect(jsonData.items.length).to.equal(1);          ",
 											"});",
 											"",
-											"pm.test(\"Response time is less than 900ms\", function () {",
+											"pm.test(\"Response time is less than 500ms\", function () {",
 											"    pm.expect(pm.response.responseTime).to.be.below(500);",
 											"});",
 											""
@@ -191,13 +195,13 @@
 											"",
 											"pm.test(\"The post returns a upd item\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.name).to.eql(\"Change the world35\");        ",
-											"    pm.expect(jsonData.dueDate).to.eql(\"2019-12-11\");            ",
+											"    pm.expect(jsonData.name).to.eql(\"Buy bread\");        ",
+											"    pm.expect(jsonData.dueDate).to.eql(\"2019-07-29T20:01:45.424Z\");            ",
 											"    pm.expect(jsonData.done).to.eql(true);      ",
 											"});",
 											"",
 											"pm.test(\"Response time is less than 900ms\", function () {",
-											"    pm.expect(pm.response.responseTime).to.be.below(500);",
+											"    pm.expect(pm.response.responseTime).to.be.below(900);",
 											"});",
 											""
 										],
@@ -222,7 +226,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\": \"Change the world35\",\n\t\"dueDate\": \"2019-12-11\",\n\t\"done\": true\n}"
+									"raw": "{\n  \"name\": \"Buy bread\",\n  \"dueDate\": \"2019-07-29T20:01:45.424Z\",\n  \"done\": true\n}",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "http://localhost:3000/test/todos/{{newTodoId}}",
@@ -241,6 +248,64 @@
 							"response": []
 						},
 						{
+							"name": "Get attachment URL-good",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "98dc0f5c-a89f-4356-9207-1f1262202d0c",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"The post returns a upd item\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.uploadUrl).to.not.eql(null);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 900ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(500);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/test/todos/{{newTodoId}}/attachment",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"test",
+										"todos",
+										"{{newTodoId}}",
+										"attachment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Delete todo",
 							"event": [
 								{
@@ -252,7 +317,7 @@
 											"    pm.response.to.have.status(200);",
 											"});",
 											"",
-											"pm.test(\"Response time is less than 900ms\", function () {",
+											"pm.test(\"Response time is less than 500ms\", function () {",
 											"    pm.expect(pm.response.responseTime).to.be.below(500);",
 											"});"
 										],
@@ -277,7 +342,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
 									"raw": "http://localhost:3000/test/todos/{{newTodoId}}",
@@ -296,34 +364,57 @@
 							"response": []
 						},
 						{
-							"name": "Get attachment URL",
+							"name": "Get attachment URL-error",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ce7f236d-250d-4620-8c17-62d5fdaa5ae9",
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"The post returns a upd item\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.uploadUrl).to.be.not.empty;",
+											"});",
+											"",
+											"pm.test(\"Response time is less than 900ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(900);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{authToken}}",
-										"type": "text"
+										"type": "text",
+										"value": "Bearer {{authToken}}"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "",
+									"options": {
+										"raw": {}
+									}
 								},
 								"url": {
-									"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos/3836b777-9bc4-4429-9b79-ba4e4f5f91c0/attachment",
-									"protocol": "https",
+									"raw": "http://localhost:3000/test/todos/{{newTodoId}}/attachment",
+									"protocol": "http",
 									"host": [
-										"{{apiId}}",
-										"execute-api",
-										"us-east-1",
-										"amazonaws",
-										"com"
+										"localhost"
 									],
+									"port": "3000",
 									"path": [
-										"dev",
+										"test",
 										"todos",
-										"3836b777-9bc4-4429-9b79-ba4e4f5f91c0",
+										"{{newTodoId}}",
 										"attachment"
 									]
 								}
@@ -567,19 +658,19 @@
 	],
 	"variable": [
 		{
-			"id": "c883a2c3-5595-40b2-a434-9331f186ff10",
+			"id": "b52efabf-d0ea-4797-bf1d-3d586b1f63d6",
 			"key": "apiId",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "df50ca32-0491-4a2b-94ac-fa0f4d5cf440",
+			"id": "a3a6ae15-c5ef-4ab1-af35-5a0cea18fd5c",
 			"key": "authToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "a3f8d8e4-051c-4a1e-8331-2a1b84d35620",
+			"id": "ecaf8ea9-b8b2-4fa1-9bd8-3e3c7fd5612e",
 			"key": "Authorization",
 			"value": "",
 			"type": "string"

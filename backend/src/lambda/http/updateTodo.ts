@@ -13,9 +13,9 @@ const logger = createLogger("updateTodo");
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   logger.debug("In updateTodo - out");
   const todoId = event.pathParameters.todoId
-  const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
+  const updtdTodoItm: UpdateTodoRequest = JSON.parse(event.body)
   const uid = getUserId(event);
-  const ret: TodoUpdate = await bl.updateTodoItem(uid, todoId, updatedTodo);
+  const ret: TodoUpdate = await bl.updateTodoItem(uid, todoId, updtdTodoItm);
   logger.debug("In updateTodo - out");
   return {
     statusCode: 200,
