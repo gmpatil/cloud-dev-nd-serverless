@@ -93,7 +93,6 @@ functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
-  # TODO: Configure this function
   GetTodos:
     handler: src/lambda/http/getTodos.handler
     events:
@@ -101,6 +100,7 @@ functions:
           method: get
           path: todos
           cors: true  
+          authorizer: Auth          
     iamRoleStatementsInherit: true                      
     iamRoleStatements:
       - Effect: Allow
@@ -121,33 +121,32 @@ functions:
           - xray:PutTelemetryRecords
         Resource: "*"  
 
-  # TODO: Configure this function
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     events:
       - http:
           method: post
           path: todos
-          cors: true                    
+          cors: true          
+          authorizer: Auth                    
           request:
             # Schema that will validate the incoming requests
             schema:
               application/json: ${file(models/create-todo-req.json)}
 
-  # TODO: Configure this function
   UpdateTodo:
     handler: src/lambda/http/updateTodo.handler
     events:
       - http:
           method: patch
           path: todos/{todoId}
-          cors: true                    
+          cors: true 
+          authorizer: Auth                                                 
           request:
             # Schema that will validate the incoming requests
             schema:
               application/json: ${file(models/update-todo-req.json)}
 
-  # TODO: Configure this function
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
     events:
@@ -155,8 +154,8 @@ functions:
           method: delete
           path: todos/{todoId}
           cors: true                    
-
-  # TODO: Configure this function
+          authorizer: Auth                    
+  
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
@@ -164,7 +163,8 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true                    
-
+          authorizer: Auth              
+          
 resources:
   Resources:   
     GatewayResponseDefault4XX:

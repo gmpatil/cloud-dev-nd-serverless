@@ -15,11 +15,6 @@ const logger = createLogger("utils");
 export function getUserId(event: APIGatewayProxyEvent): string {
   logger.debug("utils.getUserId - in"); 
   const authorization = event.headers.Authorization
-  logger.debug(`event.headers ${event.headers}`); 
-  console.log(`event.headers ${event.headers}`);   
-
-  logger.debug(`event.headers.Authorization: ${authorization}`); 
-  console.log(`event.headers.Authorization: ${authorization}`);   
 
   const split = authorization.split(' ')
   const jwtToken = split[1]

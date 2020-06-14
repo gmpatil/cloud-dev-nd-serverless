@@ -4,15 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "type": "node",
-            "request": "45a71ea9-f541-4785-8f39-09fc004cdaa6",
-            "name": "Attach Request",
-            "port": 9229,
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
-        },
+        
         {
             "type": "node",
             "request": "attach",
@@ -22,22 +14,24 @@
                 "<node_internals>/**"
             ]
         },
-        
-        
         {
+            //
+            // Note package.json should have
+            // "debug": "export SLS_DEBUG=* && node --inspect ~/.nvm/versions/node/v12.16.3/bin/serverless offline -s test"
+            //
+            "name": "Debug-Node",
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
+            "cwd": "${workspaceRoot}",
+            "sourceMaps": true,
+            //"outFiles": ["${workspaceRoot}/lib/**/*.js"], 
+            "outFiles": ["${workspaceRoot}/.webpack/service/**/*.js"], 
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run-script",
+                "debug"
             ],
-            "program": "${workspaceFolder}/handler.js"
-        },
-        {
-            "name": "Attach to Process",
-            "type": "node",
-            "request": "attach",
             "port": 9229
-          }
+           }        
     ]
 }

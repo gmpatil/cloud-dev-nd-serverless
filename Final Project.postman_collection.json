@@ -658,20 +658,32 @@
 	],
 	"variable": [
 		{
-			"id": "b52efabf-d0ea-4797-bf1d-3d586b1f63d6",
+			"id": "c5387307-9de3-4ca1-bcbf-75c4335d91bb",
 			"key": "apiId",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "a3a6ae15-c5ef-4ab1-af35-5a0cea18fd5c",
+			"id": "6b2c5ace-d52e-4094-b3cf-784f62ebdd12",
 			"key": "authToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "ecaf8ea9-b8b2-4fa1-9bd8-3e3c7fd5612e",
+			"id": "adbe20d9-d0cd-4f76-8bc3-32bac2ddb819",
 			"key": "Authorization",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "d6b35364-03e1-470d-9711-f7479eceef63",
+			"key": "old_authToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "b9858312-70be-4fed-8ef4-d51ffd5fbfd7",
+			"key": "ddddd",
 			"value": "",
 			"type": "string"
 		}

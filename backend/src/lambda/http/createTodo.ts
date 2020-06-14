@@ -17,11 +17,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const ret: TodoItem = await bl.createTodoItem(uid, newTodoItm);
   logger.debug("In crateTodo - out");
   return {
-    statusCode: 201,
+    statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: JSON.stringify(ret)
+    body: JSON.stringify({"item": ret})
   };
 }

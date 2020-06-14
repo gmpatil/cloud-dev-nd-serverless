@@ -16,13 +16,13 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const updtdTodoItm: UpdateTodoRequest = JSON.parse(event.body)
   const uid = getUserId(event);
   const ret: TodoUpdate = await bl.updateTodoItem(uid, todoId, updtdTodoItm);
-  logger.debug("In updateTodo - out");
+  logger.debug(`In updateTodo - out : ${ret}`);
   return {
     statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: JSON.stringify(ret)
+    body: ""
   };
 }
