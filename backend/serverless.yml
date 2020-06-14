@@ -146,6 +146,13 @@ functions:
             # Schema that will validate the incoming requests
             schema:
               application/json: ${file(models/update-todo-req.json)}
+    iamRoleStatementsInherit: true
+    iamRoleStatementsName: updateTodoRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
@@ -155,7 +162,14 @@ functions:
           path: todos/{todoId}
           cors: true                    
           authorizer: Auth                    
-  
+    iamRoleStatementsInherit: true
+    iamRoleStatementsName: deleteTodoRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
@@ -163,7 +177,18 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true                    
-          authorizer: Auth              
+          authorizer: Auth     
+    iamRoleStatementsInherit: true
+    iamRoleStatementsName: generateUrlTodoRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}  
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+        Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
           
 resources:
   Resources:   
