@@ -64,7 +64,7 @@ export async function updateTodo(userId: string, todoId: string, upd: TodoUpdate
 
     // Name is reserved word in DynamoDB.
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ReservedWords.html
-    const res = await dbDocClient.update({
+    await dbDocClient.update({
         TableName: tbl,
         Key: { userId: userId, todoId: todoId },
         UpdateExpression: "set #name=:nm, dueDate=:dd, done=:dn",
@@ -80,14 +80,14 @@ export async function updateTodo(userId: string, todoId: string, upd: TodoUpdate
     }).promise();
 
     logger.debug("todoDb.updateTodo - out");
-    return res.Attributes;
+    return upd;
 }
 
 export async function updateTodoAttachement(userId: string, todoId: string, downloadUrl: string)
-    :Promise<TodoUpdate> {
+    :Promise<void> {
         
     logger.debug("todoDb.updateTodoAttachement - in");
-    const res = await dbDocClient.update({
+    await dbDocClient.update({
         TableName: tbl,
         Key: { userId: userId, todoId: todoId },
         UpdateExpression: "set attachmentUrl=:aur",
@@ -98,7 +98,7 @@ export async function updateTodoAttachement(userId: string, todoId: string, down
     }).promise();
 
     logger.debug("todoDb.updateTodoAttachement - out");
-    return res.Attributes;
+    return ;
 }
 
 export async function deleteTodo(userId: string, todoId: string): Promise<void> {

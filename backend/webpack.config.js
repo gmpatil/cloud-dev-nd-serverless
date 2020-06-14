@@ -1,7 +1,7 @@
 const path = require('path');
 const slsw = require('serverless-webpack');
 // var nodeExternals = require('webpack-node-externals')
-var webpack = require('webpack');
+// var webpack = require('webpack');
 
 module.exports = {
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
@@ -23,9 +23,9 @@ module.exports = {
       { test: /\.tsx?$/, loader: 'ts-loader' },
     ],
   },
-  plugins:[
-    new webpack.SourceMapDevToolPlugin({
-        filename: '[name].js.map'
-    })
-  ],  
+  // plugins:[
+  //   new webpack.SourceMapDevToolPlugin({
+  //       filename: '[name].js.map'
+  //   })
+  // ],  
 };

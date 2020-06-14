@@ -8,9 +8,10 @@
     "noUnusedParameters": true,
     "sourceMap": true,
     "target": "es2017",
-    "sourceRoot": "${workspaceRoot}/src",
-    "outDir": "${workspaceRoot}/lib",
-    "mapRoot": "compiled"  
+    "outDir": "lib"    
+    // "sourceRoot": "${workspaceRoot}/src",
+    // "outDir": "${workspaceRoot}/lib",
+    // "mapRoot": "compiled"  
   },
   "exclude": [
     "node_modules"
